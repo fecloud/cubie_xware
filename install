@@ -1,0 +1,36 @@
+#!/bin/sh
+
+PROG=xware
+PROG_PATH="/data/app/$PROG"
+MSG_PREFIX=" *"
+
+echo "$MSG_PREFIX start install $PROG"
+
+if [ -d "$PROG_PATH" ] ; then
+	echo "$MSG_PREFIX not mkdir -p $PROG_PATH"
+else
+	echo "$MSG_PREFIX mkdir -p $PROG_PATH"
+	 mkdir -p $PROG_PATH
+fi
+
+cp  -r -n ./cfg $PROG_PATH/
+cp  -r -n ./lib $PROG_PATH/
+cp  -n ./portal $PROG_PATH/
+cp  -n ./$PROG $PROG_PATH/
+
+if [ -f "/etc/init.d/$PROG" ] ; then
+	echo "$MSG_PREFIX /etc/init.d/$PROG exits"
+else
+	ln  -f -s /data/app/$PROG/$PROG /etc/init.d/$PROG
+fi
+
+if [ -f "/etc/rc0.d/K90$PROG" ] ; then
+	echo "$MSG_PREFIX not need to start boot"
+else
+	update-rc.d  xware defaults 90
+fi
+
+service xware start
+
+echo "$MSG_PREFIX install sucess $PROG"
+
